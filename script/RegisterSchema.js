@@ -15,7 +15,7 @@ async function registerSchema() {
   schemaRegistry.connect(signer);
   
   const schema = "bytes32[] citationUID, bytes32 authorName, string articleTitle, bytes32 articleHash, string urlOfContent";
-  const resolverAddress = "0x0a7E2Ff54e76B8E6659aedc9103FB21c038050D0"; // Sepolia 0.26
+  const resolverAddress = undefined; // Sepolia 0.26
   const revocable = false;
   
   try {
