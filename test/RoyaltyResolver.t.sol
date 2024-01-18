@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.20;
 
 import {Test, console2} from "forge-std/Test.sol";
 import {RoyaltyResolver} from "../src/RoyaltyResolver.sol";
@@ -11,7 +11,5 @@ contract RoyaltyResolverTest is Test {
         royaltyResolver = new RoyaltyResolver();
     }
 
-    function testFunction() public {
-        
-    }
+    function testFunction() public {}
 }
