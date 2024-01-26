@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.20;
 
-
 import {ISchemaResolver} from "eas-contracts/resolver/ISchemaResolver.sol";
 
 import {EMPTY_UID} from "eas-contracts/Common.sol";
