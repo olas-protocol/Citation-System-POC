@@ -10,6 +10,7 @@ contract AuthorStakingContract is ReentrancyGuard {
     // Mapping to track staked Ether balances of each address.
     mapping(address => uint256) public stakes;
     // Event to log staking activity.
+
     event EtherStaked(address indexed from, uint256 amount);
     // Event to log withdrawal activity.
     event EtherWithdrawn(address indexed to, uint256 amount);
@@ -26,13 +27,13 @@ contract AuthorStakingContract is ReentrancyGuard {
         emit EtherStaked(msg.sender, msg.value);
     }
 
-   // Allows users to withdraw their staked Ether.
-   function withdrawStake(uint256 amount) external nonReentrant hasSufficientStake(amount) {
-    require(amount > 0, "Withdrawal amount must be greater than 0");
-    stakes[msg.sender] -= amount;
-    Address.sendValue(payable(msg.sender), amount); // Safer Ether transfer
-    emit EtherWithdrawn(msg.sender, amount);
-}
+    // Allows users to withdraw their staked Ether.
+    function withdrawStake(uint256 amount) external nonReentrant hasSufficientStake(amount) {
+        require(amount > 0, "Withdrawal amount must be greater than 0");
+        stakes[msg.sender] -= amount;
+        Address.sendValue(payable(msg.sender), amount); // Safer Ether transfer
+        emit EtherWithdrawn(msg.sender, amount);
+    }
 
     // Function to check the staked balance of a caller.
     function getStakedBalance(address staker) external view returns (uint256) {

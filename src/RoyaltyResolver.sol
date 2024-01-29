@@ -16,7 +16,6 @@ struct CustomAttestationSchema {
     string urlOfContent; // The URL where the content can be accessed
 }
 
-
 /// @title RoyaltyResolver
 /// @notice Distributes royalties among citation attesters and stakes the remaining ether on behalf of the attester.
 contract RoyaltyResolver is SchemaResolver, ReentrancyGuard {
@@ -51,13 +50,12 @@ contract RoyaltyResolver is SchemaResolver, ReentrancyGuard {
 
     /// @param value = article stake amount
     function onAttest(Attestation calldata attestation, uint256 value) internal override nonReentrant returns (bool) {
-        if(value == 0) revert InsufficientEthValueSent();
+        if (value == 0) revert InsufficientEthValueSent();
         emit ValueReceived(msg.sender, value);
-        
+
         // Decode the attestation's data field into a struct
         CustomAttestationSchema memory customData = decodeCustomData(attestation.data);
-        
-        
+
         uint256 receiversUIDsListLength = customData.citationUID.length;
         if (receiversUIDsListLength == 0) {
             return true;
@@ -65,22 +63,22 @@ contract RoyaltyResolver is SchemaResolver, ReentrancyGuard {
 
         uint256 totalRoyalty = (value * ROYALTY_PERCENTAGE) / 100;
         uint256 individualRoyalty = totalRoyalty / receiversUIDsListLength;
-        if(individualRoyalty == 0) revert InsufficientIndividualRoyaltyPayment();
+        if (individualRoyalty == 0) revert InsufficientIndividualRoyaltyPayment();
 
-        uint256 stakingAmount = value - totalRoyalty;  // Calculate the remaining staking amount after deducting royalty fee and transfer to the staking contract.
-        
+        uint256 stakingAmount = value - totalRoyalty; // Calculate the remaining staking amount after deducting royalty fee and transfer to the staking contract.
+
         for (uint256 i = 0; i < receiversUIDsListLength; ++i) {
             // Access each citationUID from the decoded data
             bytes32 citationUID = customData.citationUID[i];
             // Fetch the attestation for each citationUID
             Attestation memory receiverAttestation = _eas.getAttestation(citationUID);
-            if(address(receiverAttestation.attester) == address(0)) revert InvalidCitationUID();
+            if (address(receiverAttestation.attester) == address(0)) revert InvalidCitationUID();
 
             address payable royaltyReceiverAddress = payable(receiverAttestation.attester);
-            royaltyReceiverAddress.sendValue(individualRoyalty); // Using OpenZeppelin's sendValue() for safe Eth transfer. 
+            royaltyReceiverAddress.sendValue(individualRoyalty); // Using OpenZeppelin's sendValue() for safe Eth transfer.
             emit RoyaltyDistributed(royaltyReceiverAddress, individualRoyalty);
         }
-        
+
         IAuthorStake(_stakingContract).stakeEther{value: stakingAmount}();
         emit TransferredStake(_stakingContract, stakingAmount);
 
